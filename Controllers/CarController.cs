@@ -6,6 +6,7 @@ using cs_api_rental_car_mvc.Dtos.Response;
 using cs_api_rental_car_mvc.Entities;
 using cs_api_rental_car_mvc.Services.CarService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cs_api_rental_car_mvc.Controllers
@@ -14,7 +15,6 @@ namespace cs_api_rental_car_mvc.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-
         private readonly ICarService carService;
 
         public CarController(ICarService carService)
@@ -26,15 +26,6 @@ namespace cs_api_rental_car_mvc.Controllers
         [HttpGet]
         public async Task<ActionResult<BaseResponse<List<CarEntity>>>> GetCars([FromQuery] PaginationRequestDto requestDto)
         {
-            if (!IsAdmin())
-            {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
-                {
-                    Status = 401,
-                    Message = "You're not an Admin!",
-                });
-            }
-
             var (result, cars) = await carService.GetCar(requestDto);
 
             if (result != null)
@@ -54,15 +45,6 @@ namespace cs_api_rental_car_mvc.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BaseResponse<CarEntity>>> GetCarById(int id)
         {
-            if (!IsAdmin())
-            {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
-                {
-                    Status = 401,
-                    Message = "You're not an Admin!",
-                });
-            }
-
             var (result, car) = await carService.GetCarById(id);
 
             if (result != null)
@@ -84,10 +66,11 @@ namespace cs_api_rental_car_mvc.Controllers
         {
             if (!IsAdmin())
             {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
+                return StatusCode(StatusCodes.Status403Forbidden, new BaseResponse<object>
                 {
-                    Status = 401,
-                    Message = "You're not an Admin!",
+                    Status = 403,
+                    Message = "You are not authorized to perform this action.",
+                    Data = null
                 });
             }
 
@@ -117,10 +100,11 @@ namespace cs_api_rental_car_mvc.Controllers
         {
             if (!IsAdmin())
             {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
+                return StatusCode(StatusCodes.Status403Forbidden, new BaseResponse<object>
                 {
-                    Status = 401,
-                    Message = "You're not an Admin!",
+                    Status = 403,
+                    Message = "You are not authorized to perform this action.",
+                    Data = null
                 });
             }
 
@@ -150,10 +134,11 @@ namespace cs_api_rental_car_mvc.Controllers
         {
             if (!IsAdmin())
             {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
+                return StatusCode(StatusCodes.Status403Forbidden, new BaseResponse<object>
                 {
-                    Status = 401,
-                    Message = "You're not an Admin!",
+                    Status = 403,
+                    Message = "You are not authorized to perform this action.",
+                    Data = null
                 });
             }
 
@@ -173,10 +158,11 @@ namespace cs_api_rental_car_mvc.Controllers
         {
             if (!IsAdmin())
             {
-                return Unauthorized(new BaseResponse<PaginationBaseResponse<CarEntity>>
+                return StatusCode(StatusCodes.Status403Forbidden, new BaseResponse<object>
                 {
-                    Status = 401,
-                    Message = "You're not an Admin!",
+                    Status = 403,
+                    Message = "You are not authorized to perform this action.",
+                    Data = null
                 });
             }
 
