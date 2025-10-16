@@ -70,7 +70,7 @@ namespace cs_api_rental_car_mvc.Services.AuthService
             var claims = new List<Claim>{
             new Claim("name", user.Name),
             new Claim("email", user.Email),
-            new Claim("role", user.Role),
+            new Claim(ClaimTypes.Role, user.Role),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 

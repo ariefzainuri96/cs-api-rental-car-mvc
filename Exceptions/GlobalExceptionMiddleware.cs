@@ -42,11 +42,11 @@ namespace cs_api_rental_car_mvc.Exceptions
                 statusCode = HttpStatusCode.BadRequest;
                 detail = exception.Message;
             }
-            // else if (exception.GetType().Name == "EntityNotFoundException")
-            // {
-            //     statusCode = HttpStatusCode.NotFound;
-            //     detail = exception.Message;
-            // }
+            else if (exception is EntityNotFoundException)
+            {
+                statusCode = HttpStatusCode.NotFound;
+                detail = exception.Message;
+            }
             else if (exception is UnauthorizedAccessException)
             {
                 statusCode = HttpStatusCode.Forbidden;
@@ -61,8 +61,7 @@ namespace cs_api_rental_car_mvc.Exceptions
             var response = new
             {
                 Status = (int)statusCode,
-                Title = statusCode.ToString(),
-                Detail = detail
+                Message = detail,
             };
 
             context.Response.ContentType = "application/json";

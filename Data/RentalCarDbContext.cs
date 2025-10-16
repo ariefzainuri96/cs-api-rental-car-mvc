@@ -8,6 +8,25 @@ namespace cs_api_rental_car_mvc.Data
 {
     public class RentalCarDbContext : DbContext
     {
+        public override int SaveChanges()
+        {
+            SetAuditFields();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            SetAuditFields();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public RentalCarDbContext(DbContextOptions<RentalCarDbContext> options)
+                : base(options)
+        { }
+
+        public DbSet<CarEntity> Cars => Set<CarEntity>();
+        public DbSet<UserEntity> Users => Set<UserEntity>();
+        public DbSet<RentEntity> Rents => Set<RentEntity>();
 
         private void SetAuditFields()
         {
@@ -32,26 +51,5 @@ namespace cs_api_rental_car_mvc.Data
                 }
             }
         }
-
-        public override int SaveChanges()
-        {
-            SetAuditFields();
-            return base.SaveChanges();
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            SetAuditFields();
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        public RentalCarDbContext(DbContextOptions<RentalCarDbContext> options)
-                : base(options)
-        {
-        }
-
-        public DbSet<CarEntity> Cars => Set<CarEntity>();
-        public DbSet<UserEntity> Users => Set<UserEntity>();
-        public DbSet<RentEntity> Rents => Set<RentEntity>();
     }
 }
