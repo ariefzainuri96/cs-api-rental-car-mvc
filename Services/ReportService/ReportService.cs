@@ -42,10 +42,10 @@ namespace cs_api_rental_car_mvc.Services.ReportService
             {
                 worksheet.Cell(row, 1).Value = rent.User?.Name;
                 worksheet.Cell(row, 2).Value = $"{rent.Car?.Brand} - {rent.Car?.Model}";
-                worksheet.Cell(row, 3).Value = rent.StartDate;
-                worksheet.Cell(row, 4).Value = rent.EndDate;
-                worksheet.Cell(row, 5).Value = rent.ActualEndDate;
-                worksheet.Cell(row, 6).Value = rent.TotalAmount;
+                worksheet.Cell(row, 3).Value = rent.StartDate.ToString("yyyy-MM-dd");
+                worksheet.Cell(row, 4).Value = rent.EndDate.ToString("yyyy-MM-dd");
+                worksheet.Cell(row, 5).Value = rent.ActualEndDate?.ToString("yyyy-MM-dd");
+                worksheet.Cell(row, 6).Value = rent.TotalAmount.ToString("C");
                 row++;
             }
 
