@@ -30,6 +30,16 @@ namespace cs_api_rental_car_mvc.Controllers
         [HttpPost]
         public async Task<ActionResult<BaseResponse<RentEntity>>> PostRent([FromQuery] RentRequestDto requestDto)
         {
+            if (IsAdmin())
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new BaseResponse<object>
+                {
+                    Status = 403,
+                    Message = "You are not authorized to perform this action.",
+                    Data = null
+                });
+            }
+
             int userId = int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", out int id) ? id : -1;
 
             if (userId == -1)
