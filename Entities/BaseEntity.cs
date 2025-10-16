@@ -7,11 +7,14 @@ namespace cs_api_rental_car_mvc.Entities
     {
         [Column("id")]
         public int Id { get; set; }
+        
         [Column("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
+        
         [Column("updated_at")]
-        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
+        
         [Column("deleted_at")]
-        public DateTimeOffset DeletedAt { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
     }
 }

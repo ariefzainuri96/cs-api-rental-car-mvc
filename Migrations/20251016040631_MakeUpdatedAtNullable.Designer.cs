@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cs_api_rental_car_mvc.Data;
 
 namespace cs_api_rental_car_mvc.Migrations
 {
     [DbContext(typeof(RentalCarDbContext))]
-    partial class RentalCarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251016040631_MakeUpdatedAtNullable")]
+    partial class MakeUpdatedAtNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

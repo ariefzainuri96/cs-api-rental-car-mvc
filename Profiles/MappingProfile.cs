@@ -9,7 +9,9 @@ namespace cs_api_rental_car_mvc.Profiles
         public MappingProfile()
         {
             CreateMap<CarEntity, CarRequestDto>();
-            CreateMap<CarRequestDto, CarEntity>();          
+            CreateMap<CarRequestDto, CarEntity>();   
+            CreateMap<RentEntity, RentRequestDto>();
+            CreateMap<RentRequestDto, RentEntity>();       
         }
     }
 }

@@ -24,6 +24,14 @@ namespace cs_api_rental_car_mvc.Data
                 : base(options)
         { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CarEntity>()
+            .HasQueryFilter(p => p.DeletedAt == null);
+        }
+
         public DbSet<CarEntity> Cars => Set<CarEntity>();
         public DbSet<UserEntity> Users => Set<UserEntity>();
         public DbSet<RentEntity> Rents => Set<RentEntity>();

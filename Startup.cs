@@ -119,7 +119,7 @@ namespace cs_api_rental_car_mvc
             Scheme = "bearer",
             BearerFormat = "JWT",
             In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            Description = "Enter 'Bearer' [space] and your token.\nExample: Bearer abc123xyz"
+            Description = "Enter your token.\nExample: abc123xyz..."
         });
 
         options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement

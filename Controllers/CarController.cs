@@ -76,7 +76,7 @@ namespace cs_api_rental_car_mvc.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Returns validation errors
+                return BadRequest(ModelState);
             }
 
             var (error, car) = await carService.PostCar(request);

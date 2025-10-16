@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using cs_api_rental_car_mvc.Data;
 
 namespace cs_api_rental_car_mvc.Migrations
 {
     [DbContext(typeof(RentalCarDbContext))]
-    partial class RentalCarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251016040346_RemoveCreatedByInRent")]
+    partial class RemoveCreatedByInRent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +61,7 @@ namespace cs_api_rental_car_mvc.Migrations
                         .HasColumnName("status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnName("updated_at")
                         .HasColumnType("datetimeoffset");
 
@@ -113,7 +115,7 @@ namespace cs_api_rental_car_mvc.Migrations
                         .HasColumnName("total_amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnName("updated_at")
                         .HasColumnType("datetimeoffset");
 
@@ -166,7 +168,7 @@ namespace cs_api_rental_car_mvc.Migrations
                         .HasColumnName("role")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnName("updated_at")
                         .HasColumnType("datetimeoffset");
 
