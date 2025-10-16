@@ -6,6 +6,7 @@ using cs_api_rental_car_mvc.Exceptions;
 using cs_api_rental_car_mvc.Services.AuthService;
 using cs_api_rental_car_mvc.Services.CarService;
 using cs_api_rental_car_mvc.Services.RentService;
+using cs_api_rental_car_mvc.Services.ReportService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,7 @@ namespace cs_api_rental_car_mvc
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IRentService, RentService>();
+            services.AddScoped<IReportService, ReportService>();
 
             // You can also bind the section to a strongly typed class:
             var issuer = Configuration.GetValue<string>("AppSettings:Issuer");

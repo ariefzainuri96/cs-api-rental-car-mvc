@@ -14,6 +14,6 @@ namespace cs_api_rental_car_mvc.Services.RentService
         Task<(HttpError?, RentEntity)> ReturnCar(int id);
         Task<(HttpError?, RentEntity)> CancelRent(int id);
         Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetAllRents(PaginationRequestDto requestDto);
-        Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetSpecificUserRent(PaginationRequestDto requestDto, int userId);        
+        Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetSpecificUserRent(PaginationRequestDto requestDto, int userId);                
     }
 }
