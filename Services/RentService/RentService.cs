@@ -17,13 +17,13 @@ namespace cs_api_rental_car_mvc.Services.RentService
 {
     public class RentService : IRentService
     {
-        private readonly RentalCarDbContext context;
-        private readonly IMapper mapper;
+        private readonly RentalCarDbContext _context;
+        private readonly IMapper _mapper;
 
         public RentService(RentalCarDbContext context, IMapper mapper)
         {
-            this.context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<(HttpError?, RentEntity)> CancelRent(int id)
@@ -33,13 +33,15 @@ namespace cs_api_rental_car_mvc.Services.RentService
 
         public async Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetAllRents(PaginationRequestDto requestDto)
         {
-            IQueryable<RentEntity> query = RentQuery.GetQuery(context, requestDto, null);
+            IQueryable<RentEntity> query = RentQuery.GetQuery(_context, requestDto);
 
             // Calculate the total number of items BEFORE applying skip/take.
             int totalCount = await query.CountAsync();
 
             // Apply pagination logic (Skip and Take)
             List<RentEntity> items = await query
+                .Include(x => x.Car)
+                .Include(x => x.User)
                 .Skip((requestDto.Page - 1) * requestDto.PageSize)
                 .Take(requestDto.PageSize)
                 .ToListAsync();
@@ -53,9 +55,10 @@ namespace cs_api_rental_car_mvc.Services.RentService
             });
         }
 
-        public async Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetSpecificUserRent(PaginationRequestDto requestDto, int userId)
+        public async Task<(HttpError?, PaginationBaseResponse<RentEntity>)> GetSpecificUserRent(
+            PaginationRequestDto requestDto, int userId)
         {
-            IQueryable<RentEntity> query = RentQuery.GetQuery(context, requestDto, userId);
+            IQueryable<RentEntity> query = RentQuery.GetQuery(_context, requestDto, userId: userId);
 
             // Calculate the total number of items BEFORE applying skip/take.
             int totalCount = await query.CountAsync();
@@ -77,7 +80,8 @@ namespace cs_api_rental_car_mvc.Services.RentService
 
         public async Task<(HttpError?, RentEntity)> PatchRent(int id, Dictionary<string, object> updates)
         {
-            var rent = await context.Rents.FirstOrDefaultAsync(x => x.Id == id) ?? throw new EntityNotFoundException($"Rent with ID {id} not found.");
+            var rent = await _context.Rents.FirstOrDefaultAsync(x => x.Id == id) ??
+                       throw new EntityNotFoundException($"Rent with ID {id} not found.");
 
             var invalidPropertyList = EntityUtil.CheckEntityField<CarEntity>(updates);
             if (invalidPropertyList.Count > 0)
@@ -88,32 +92,32 @@ namespace cs_api_rental_car_mvc.Services.RentService
             // Update fields dynamically
             EntityUtil.PatchEntity(rent, updates);
 
-            context.Entry(rent).State = EntityState.Modified;
+            _context.Entry(rent).State = EntityState.Modified;
 
-            context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return (null, rent);
         }
 
         public async Task<(HttpError?, RentEntity)> PostRent(RentRequestDto request)
         {
-            var car = await context.Cars.FirstAsync(c => c.Id == request.CarId);
+            var car = await _context.Cars.FirstAsync(c => c.Id == request.CarId);
 
             var totalDay = (request.EndDate - request.StartDate).TotalDays + 1;
 
             var totalAmount = car.RentalRatePerDay * (decimal)totalDay;
 
-            var rentEntity = mapper.Map<RentEntity>(request);
+            var rentEntity = _mapper.Map<RentEntity>(request);
 
             rentEntity.TotalAmount = totalAmount;
             rentEntity.Status = "Active";
 
-            await context.Rents.AddAsync(rentEntity);
+            await _context.Rents.AddAsync(rentEntity);
 
             car.Status = "Disewa";
-            context.Entry(car).State = EntityState.Modified;
+            _context.Entry(car).State = EntityState.Modified;
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return (null, rentEntity);
         }
@@ -125,19 +129,20 @@ namespace cs_api_rental_car_mvc.Services.RentService
 
         private async Task<(HttpError?, RentEntity)> ChangeStatus(int id, string status)
         {
-            var rent = await context.Rents.FirstOrDefaultAsync(x => x.Id == id) ?? throw new EntityNotFoundException($"Rent with ID {id} not found.");
+            var rent = await _context.Rents.FirstOrDefaultAsync(x => x.Id == id) ??
+                       throw new EntityNotFoundException($"Rent with ID {id} not found.");
 
             rent.ActualEndDate = DateTime.Now;
             rent.Status = status;
 
-            var car = await context.Cars.FirstAsync(x => x.Id == rent.CarId);
+            var car = await _context.Cars.FirstAsync(x => x.Id == rent.CarId);
 
             car.Status = "Tersedia";
 
-            context.Entry(rent).State = EntityState.Modified;
-            context.Entry(car).State = EntityState.Modified;
+            _context.Entry(rent).State = EntityState.Modified;
+            _context.Entry(car).State = EntityState.Modified;
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return (null, rent);
         }

@@ -8,7 +8,7 @@ namespace cs_api_rental_car_mvc.Utils
     {
         public static List<string> CheckEntityField<T>(Dictionary<string, object> values)
         {
-            List<string> invalidPropertyList = new List<string>();
+            var invalidPropertyList = new List<string>();
 
             foreach (var item in values)
             {
@@ -31,16 +31,13 @@ namespace cs_api_rental_car_mvc.Utils
 
         public static void PatchEntity<T>(T entity, Dictionary<string, object> updates)
         {
-            foreach (var update in updates)
+            foreach (var (key, value) in updates)
             {
-                var propertyName = update.Key;
-                var propertyValue = update.Value;
-
                 // Use reflection to check if the property exists and is writable
-                var propertyInfo = typeof(T).GetProperty(propertyName,
+                var propertyInfo = typeof(T).GetProperty(key,
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
-                propertyInfo?.SetValue(entity, Convert.ChangeType(propertyValue, propertyInfo.PropertyType));
+                propertyInfo?.SetValue(entity, Convert.ChangeType(value, propertyInfo.PropertyType));
             }
         }
     }

@@ -28,7 +28,7 @@ namespace cs_api_rental_car_mvc.Query
             }
             else
             {
-                propertyNames = new string[] { requestDto.SearchField };
+                propertyNames = new[] { requestDto.SearchField };
             }
 
             Type currentType = typeof(T);
@@ -111,7 +111,7 @@ namespace cs_api_rental_car_mvc.Query
             }
             else
             {
-                properties = new string[] { requestDto.OrderBy };
+                properties = new[] { requestDto.OrderBy };
             }
 
             Type currentType = typeof(T);

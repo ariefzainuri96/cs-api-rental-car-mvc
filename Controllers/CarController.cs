@@ -15,18 +15,18 @@ namespace cs_api_rental_car_mvc.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly ICarService carService;
+        private readonly ICarService _carService;
 
         public CarController(ICarService carService)
         {
-            this.carService = carService;
+            _carService = carService;
         }
 
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<BaseResponse<List<CarEntity>>>> GetCars([FromQuery] PaginationRequestDto requestDto)
         {
-            var (result, cars) = await carService.GetCar(requestDto);
+            var (result, cars) = await _carService.GetCar(requestDto);
 
             if (result != null)
             {
@@ -45,7 +45,7 @@ namespace cs_api_rental_car_mvc.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BaseResponse<CarEntity>>> GetCarById(int id)
         {
-            var (result, car) = await carService.GetCarById(id);
+            var (result, car) = await _carService.GetCarById(id);
 
             if (result != null)
             {
@@ -79,7 +79,7 @@ namespace cs_api_rental_car_mvc.Controllers
                 return BadRequest(ModelState);
             }
 
-            var (error, car) = await carService.PostCar(request);
+            var (error, car) = await _carService.PostCar(request);
 
             if (error != null)
             {
@@ -113,7 +113,7 @@ namespace cs_api_rental_car_mvc.Controllers
                 return BadRequest("No fields to update.");
             }
 
-            var (error, car) = await carService.PatchCar(id, updates);
+            var (error, car) = await _carService.PatchCar(id, updates);
 
             if (error != null)
             {
@@ -142,7 +142,7 @@ namespace cs_api_rental_car_mvc.Controllers
                 });
             }
 
-            var error = await carService.DeleteCar(id);
+            var error = await _carService.DeleteCar(id);
 
             if (error != null)
             {
@@ -171,7 +171,7 @@ namespace cs_api_rental_car_mvc.Controllers
                 return BadRequest(ModelState);
             }
 
-            var (error, car) = await carService.PutCar(id, request);
+            var (error, car) = await _carService.PutCar(id, request);
 
             if (error != null)
             {

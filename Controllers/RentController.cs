@@ -50,9 +50,7 @@ namespace cs_api_rental_car_mvc.Controllers
                     Message = "You are not authorized to perform this action.",
                     Data = null
                 });
-            }
-
-            logger.LogInformation($"UserId: {userId}");
+            }            
 
             requestDto.UserId = userId;
 

@@ -42,103 +42,103 @@ namespace cs_api_rental_car_mvc
             var key = Configuration.GetValue<string>("AppSettings:Token");
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = issuer,
-                ValidAudience = audience,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(key))
-            };
-
-            // ✅ Handle unauthorized and forbidden responses
-            options.Events = new JwtBearerEvents
-            {                
-                OnChallenge = context =>
+                .AddJwtBearer(options =>
                 {
-                    // Skip the default response
-                    context.HandleResponse();
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(key))
+                    };
 
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonSerializer.Serialize(new
+                    // ✅ Handle unauthorized and forbidden responses
+                    options.Events = new JwtBearerEvents
                     {
-                        Status = 401,
-                        Message = "You must provide a valid Bearer token.",
-                    });
-                    return context.Response.WriteAsync(result);
-                },
-                OnForbidden = context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonSerializer.Serialize(new
-                    {
-                        Status = 403,
-                        Message = "You do not have permission to access this resource.",
-                    });
-                    return context.Response.WriteAsync(result);
-                }
-            };
-        });
+                        OnChallenge = context =>
+                        {
+                            // Skip the default response
+                            context.HandleResponse();
+
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+                            var result = JsonSerializer.Serialize(new
+                            {
+                                Status = 401,
+                                Message = "You must provide a valid Bearer token.",
+                            });
+                            return context.Response.WriteAsync(result);
+                        },
+                        OnForbidden = context =>
+                        {
+                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                            context.Response.ContentType = "application/json";
+                            var result = JsonSerializer.Serialize(new
+                            {
+                                Status = 403,
+                                Message = "You do not have permission to access this resource.",
+                            });
+                            return context.Response.WriteAsync(result);
+                        }
+                    };
+                });
 
             services.AddControllersWithViews();
 
             services.AddDbContext<RentalCarDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers()
-                    .AddNewtonsoftJson(options =>
-                    {
-                        // Optional: Customize settings
-                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                    });
+                .AddNewtonsoftJson(options =>
+                {
+                    // Optional: Customize settings
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                });
 
             services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
 
             services.AddSwaggerGen(options =>
-    {
-        options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-        {
-            Title = "Car Rental API",
-            Version = "v1",
-            Description = "API documentation for the Car Rental service"
-        });
-
-        // Add JWT Auth to Swagger
-        options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-            Description = "Enter your token.\nExample: abc123xyz..."
-        });
-
-        options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-    });
+                    Title = "Car Rental API",
+                    Version = "v1",
+                    Description = "API documentation for the Car Rental service"
+                });
+
+                // Add JWT Auth to Swagger
+                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Description = "Enter your token.\nExample: abc123xyz..."
+                });
+
+                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+                {
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,7 +151,6 @@ namespace cs_api_rental_car_mvc
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rental Car API v1");
-                    // c.RoutePrefix = string.Empty;
                 });
             }
 
@@ -165,10 +164,7 @@ namespace cs_api_rental_car_mvc
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

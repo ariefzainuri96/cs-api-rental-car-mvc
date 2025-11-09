@@ -18,40 +18,40 @@ namespace cs_api_rental_car_mvc.Services.CarService
 {
     public class CarService : ICarService
     {
-        private readonly RentalCarDbContext context;
-        private readonly IMapper mapper;
+        private readonly RentalCarDbContext _context;
+        private readonly IMapper _mapper;
 
         public CarService(RentalCarDbContext context, IMapper mapper)
         {
-            this.context = context;
-            this.mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<HttpError?> DeleteCar(int id)
         {
-            var car = await context.Cars.FirstOrDefaultAsync(p => p.Id == id);
+            var car = await _context.Cars.FirstOrDefaultAsync(p => p.Id == id);
 
             if (car is null)
             {
                 return new HttpError("Product that you want to delete is not found!") { StatusCode = StatusCodes.Status404NotFound };
             }
 
-            context.Cars.Remove(car);
+            _context.Cars.Remove(car);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return null;
         }
 
         public async Task<(HttpError?, PaginationBaseResponse<CarEntity>)> GetCar(PaginationRequestDto requestDto)
         {
-            IQueryable<CarEntity> query = CarQuery.GetQuery(context, requestDto);
+            var query = CarQuery.GetQuery(_context, requestDto);
 
             // Calculate the total number of items BEFORE applying skip/take.
-            int totalCount = await query.CountAsync();
+            var totalCount = await query.CountAsync();
 
             // Apply pagination logic (Skip and Take)
-            List<CarEntity> items = await query
+            var items = await query
                 .Skip((requestDto.Page - 1) * requestDto.PageSize)
                 .Take(requestDto.PageSize)
                 .ToListAsync();
@@ -67,19 +67,14 @@ namespace cs_api_rental_car_mvc.Services.CarService
 
         public async Task<(HttpError?, CarEntity)> GetCarById(int id)
         {
-            var car = await context.Cars.FindAsync(id);
+            var car = await _context.Cars.FindAsync(id);
 
-            if (car is null)
-            {
-                return (new HttpError("Car with specified ID not found!") { StatusCode = StatusCodes.Status404NotFound }, new CarEntity());
-            }
-
-            return (null, car);
+            return car is null ? (new HttpError("Car with specified ID not found!") { StatusCode = StatusCodes.Status404NotFound }, new CarEntity()) : (null, car);
         }
 
         public async Task<(HttpError?, CarEntity)> PatchCar(int id, Dictionary<string, object> updates)
         {
-            var car = await context.Cars.FirstOrDefaultAsync(vg => vg.Id == id) ?? throw new EntityNotFoundException($"Car with ID {id} not found.");
+            var car = await _context.Cars.FirstOrDefaultAsync(vg => vg.Id == id) ?? throw new EntityNotFoundException($"Car with ID {id} not found.");
 
             var invalidPropertyList = EntityUtil.CheckEntityField<CarEntity>(updates);
             if (invalidPropertyList.Count > 0)
@@ -90,35 +85,35 @@ namespace cs_api_rental_car_mvc.Services.CarService
             // Update fields dynamically
             EntityUtil.PatchEntity(car, updates);
 
-            context.Entry(car).State = EntityState.Modified;
+            _context.Entry(car).State = EntityState.Modified;
 
-            context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return (null, car);
         }
 
         public async Task<(HttpError?, CarEntity)> PostCar(CarRequestDto request)
         {
-            var car = mapper.Map<CarEntity>(request);
+            var car = _mapper.Map<CarEntity>(request);
 
-            await context.Cars.AddAsync(car);
+            await _context.Cars.AddAsync(car);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return (null, car);
         }
 
         public async Task<(HttpError?, CarEntity)> PutCar(int id, CarRequestDto request)
         {
-            var existingProduct = await context.Cars
+            var existingProduct = await _context.Cars
             .FirstOrDefaultAsync(p => p.Id == id)
             ?? throw new EntityNotFoundException($"Car with ID {id} not found.");
 
-            mapper.Map(request, existingProduct);
+            _mapper.Map(request, existingProduct);
 
-            context.Entry(existingProduct).State = EntityState.Modified;
+            _context.Entry(existingProduct).State = EntityState.Modified;
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return (null, existingProduct);
         }
